@@ -1,5 +1,7 @@
 # World2 in Python
 
+[![DOI](https://zenodo.org/badge/1403568690.svg)](https://doi.org/10.5281/zenodo.23126731)
+
 A staged, validated translation of Jay W. Forrester's **World2** model, from his book *World Dynamics* (1971; 2nd ed. 1973), into Python.
 
 World2 is one of the founding models of system dynamics: five interacting stocks (population, natural resources, capital investment, pollution, and the fraction of capital in agriculture) simulated from 1900 to 2100. Forrester wrote it in DYNAMO, the simulation language of its day. This repository translates it in three stages, each one readable on its own, and checks every stage against the original book.
@@ -95,7 +97,7 @@ The finished overlays are in `validation/book-overlays/`. Regenerating them need
 
 ## Citing
 
-See [CITE.md](CITE.md). GitHub's "Cite this repository" button uses [CITATION.cff](CITATION.cff). If you use the model, please cite Forrester's book as well.
+The code is archived on Zenodo with the DOI [10.5281/zenodo.23126731](https://doi.org/10.5281/zenodo.23126731), which always points to the latest release; version 1.0.0 is [10.5281/zenodo.23126732](https://doi.org/10.5281/zenodo.23126732). See [CITE.md](CITE.md) for ready-made citations. GitHub's "Cite this repository" button uses [CITATION.cff](CITATION.cff). If you use the model, please cite Forrester's book as well.
 
 ## License
 

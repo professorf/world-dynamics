@@ -4,9 +4,11 @@ If you use this code or its validation in your work, please cite it, and please 
 
 ## This repository
 
+The code is archived on Zenodo. The DOI **10.5281/zenodo.23126731** stands for all versions and always resolves to the latest release. To cite exactly version 1.0.0, use **10.5281/zenodo.23126732**.
+
 **APA (7th ed.)**
 
-> Flor, N. V., & Claudia (Claude Interactive Assistant). (2026). *World2 in Python: A staged, validated translation of Jay W. Forrester's World Dynamics model* (Version 1.0.0) [Computer software]. https://github.com/professorf/world-dynamics
+> Flor, N. V., & Claudia (Claude Interactive Assistant). (2026). *World2 in Python: A staged, validated translation of Jay W. Forrester's World Dynamics model* (Version 1.0.0) [Computer software]. Zenodo. https://doi.org/10.5281/zenodo.23126731
 
 **BibTeX**
 
@@ -16,6 +18,7 @@ If you use this code or its validation in your work, please cite it, and please 
   title   = {World2 in Python: A Staged, Validated Translation of Jay W. Forrester's World Dynamics Model},
   year    = {2026},
   version = {1.0.0},
+  doi     = {10.5281/zenodo.23126731},
   url     = {https://github.com/professorf/world-dynamics},
   note    = {Claudia (Claude Interactive Assistant) is Claude, an AI model by Anthropic}
 }
