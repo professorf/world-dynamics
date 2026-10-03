@@ -1,0 +1,8 @@
+# Versions 1 and 2 need only the Python standard library; matplotlib draws their plots.
+# Version 3 needs numpy.
+numpy
+matplotlib
+
+# Only for the figure overlays in validation/tools/
+pillow
+pymupdf

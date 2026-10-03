@@ -1,0 +1,42 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below, and please also cite Forrester's World Dynamics."
+title: "World2 in Python: A Staged, Validated Translation of Jay W. Forrester's World Dynamics Model"
+version: 1.0.0
+date-released: 2026-10-03
+license: MIT
+repository-code: "https://github.com/professorf/world-dynamics"
+type: software
+abstract: >-
+  A Python translation of Jay W. Forrester's World2 model from World Dynamics
+  (1971; 2nd ed. 1973), in three stages: a card-for-card isomorph of the
+  original DYNAMO listing, the same code with readable names, and a modern
+  version with policy switches. All three versions reproduce every figure in
+  Chapter 4 of the book, including its pollution-crisis, crowding and
+  food-shortage experiments. Claudia (Claude Interactive Assistant) is
+  Claude, an AI model by Anthropic.
+keywords:
+  - system dynamics
+  - World2
+  - World Dynamics
+  - Jay W. Forrester
+  - DYNAMO
+  - simulation
+  - Python
+authors:
+  - family-names: Flor
+    given-names: Nick V.
+    affiliation: University of New Mexico
+    email: nickflor@unm.edu
+  - name: "Claudia (Claude Interactive Assistant)"
+references:
+  - type: book
+    title: "World Dynamics"
+    authors:
+      - family-names: Forrester
+        given-names: Jay W.
+    edition: "2nd"
+    year: 1973
+    publisher:
+      name: Wright-Allen Press
+      city: Cambridge, MA
+    notes: "First edition published 1971. The equations are from Appendix B; the validation figures are from Chapter 4."
