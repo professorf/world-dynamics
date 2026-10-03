@@ -4,7 +4,7 @@ A staged, validated translation of Jay W. Forrester's **World2** model, from his
 
 World2 is one of the founding models of system dynamics: five interacting stocks (population, natural resources, capital investment, pollution, and the fraction of capital in agriculture) simulated from 1900 to 2100. Forrester wrote it in DYNAMO, the simulation language of its day. This repository translates it in three stages, each one readable on its own, and checks every stage against the original book.
 
-**Authors:** Nick V. Flor (University of New Mexico, nickflor@unm.edu) and Claudia (Claude Interactive Assistant), i.e., Claude, an AI model by Anthropic. See [How this was made](#how-this-was-made) for who did what, and [CITE.md](CITE.md) to cite it.
+**Authors:** Nick V. Flor (University of New Mexico, nickflor@unm.edu, ORCID [0000-0002-5162-9277](https://orcid.org/0000-0002-5162-9277)) and Claudia (Claude Interactive Assistant), i.e., Claude, an AI model by Anthropic. See [How this was made](#how-this-was-made) for who did what, and [CITE.md](CITE.md) to cite it.
 
 ## Quick start
 

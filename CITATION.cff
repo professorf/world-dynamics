@@ -27,6 +27,7 @@ authors:
     given-names: Nick V.
     affiliation: University of New Mexico
     email: nickflor@unm.edu
+    orcid: "https://orcid.org/0000-0002-5162-9277"
   - name: "Claudia (Claude Interactive Assistant)"
 references:
   - type: book
