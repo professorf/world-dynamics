@@ -5,6 +5,5 @@ __pycache__/
 /world2_*_ORIG-*.png
 /world2_3_modern_runs.png
 
-# Scans of the book, and the overlays made from them, stay on your own computer
+# Full-page scans of the book stay on your own computer
 validation/book-pages/
-validation/book-overlays/

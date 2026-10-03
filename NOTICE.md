@@ -9,9 +9,10 @@ This repository reproduces the following from the 2nd edition, for scholarly stu
 | `source-code.dyn` | A transcription of Appendix B, "Equations of the World Model": the model's DYNAMO listing |
 | `definition-of-terms.md` | A transcription of Appendix C, "Definitions of Terms" |
 | `validation/README.md` | Short quotations from Chapter 4, with page numbers, compared against our runs |
+| `validation/book-overlays/` | Images of the twelve figures in Chapter 4 (pp. 70-91), with their captions, with our model runs drawn over them |
 
-The Python files, the diagram in `causal-loop-diagram.md` and the plots in `validation/` are our own work, built from the equations in Appendix B.
+The Python files, the diagram in `causal-loop-diagram.md`, the plots at the top level of `validation/`, and the colored curves and headers in the overlays are our own work, built from the equations in Appendix B. The figures are reproduced in the overlays only so that readers can check our runs against Forrester's published output.
 
-Scans of the book's pages are **not** included. The tools in `validation/tools/` regenerate the figure overlays from your own copy of the book; their inputs and outputs stay in the git-ignored folders `validation/book-pages/` and `validation/book-overlays/`.
+Full-page scans of the book are **not** included. The tools in `validation/tools/` regenerate the overlays from your own copy of the book; the page images they read stay in the git-ignored folder `validation/book-pages/`.
 
 If you hold rights in *World Dynamics* and have a concern about this material, please open an issue on the repository.

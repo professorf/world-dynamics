@@ -63,7 +63,7 @@ Three features of DYNAMO shape the translation:
 Each version was run under all four experiments in Chapter 4 of *World Dynamics*: the standard run, and the book's pollution-crisis, crowding and food-shortage experiments, using the parameter changes printed in each figure's margin.
 
 - **Against each other.** In every experiment, version 2 is bit-for-bit identical to version 1, and version 3 differs by at most about 5 parts in 10^15.
-- **Against the book's figures.** Every run was drawn on scans of all twelve figures in Chapter 4 (4-1 to 4-12, out to the year 2300). The curves land on the points Forrester's DYNAMO run printed. The scans are not distributed here; `validation/tools/` regenerates the overlays from your own copy of the book.
+- **Against the book's figures.** Every run was drawn on scans of all twelve figures in Chapter 4 (4-1 to 4-12, out to the year 2300). The curves land on the points Forrester's DYNAMO run printed. The 36 overlay images are in `validation/book-overlays/`, and `validation/tools/` regenerates them from your own copy of the book.
 - **Against the book's text.** Twenty-one numerical statements in Chapter 4 were checked: peak years, peak values and ratios.
 - **Against an independent implementation.** The standard run matches [pyworld2](https://github.com/cvanwynsberghe/pyworld2) to about 2 parts in 10^15.
 
@@ -91,7 +91,7 @@ python validation/tools/experiments.py     # how closely the three versions agre
 python validation/tools/checkpoints.py     # our numbers for every statement checked in the book's text
 ```
 
-The figure overlays need your own copy of *World Dynamics*, Chapter 4. See [validation/README.md](validation/README.md).
+The finished overlays are in `validation/book-overlays/`. Regenerating them needs your own copy of *World Dynamics*, Chapter 4; see [validation/README.md](validation/README.md).
 
 ## Citing
 

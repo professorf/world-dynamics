@@ -18,6 +18,7 @@ This folder records how the three Python versions of World2 were checked against
 | `tools/checkpoints.py` | Prints our numbers for every statement checked in the book's text |
 | `tools/extract_pages.py` | Makes page images from your own scan of Chapter 4 |
 | `tools/calibrate.py`, `tools/figures.py`, `tools/make_overlays.py` | Draw our runs on the book's figures |
+| `book-overlays/<script>_fig4-NN.png` | Each version's runs drawn on the book's Figures 4-1 to 4-12 (36 images) |
 | `world2_1_isomorph_ORIG-A.png`, `world2_1_isomorph_ORIG-B.png` | What version 1 draws from the listing's two PLOT cards |
 | `world2_2_readable_ORIG-A.png`, `world2_2_readable_ORIG-B.png` | The same plots from version 2 |
 | `world2_3_modern_runs.png` | What version 3 draws: the standard run and the pollution crisis |
@@ -59,14 +60,14 @@ Version 2 changes only names, so its arithmetic is the same operation for operat
 
 Every version's runs were drawn on scans of all twelve figures in Chapter 4. The curves land on the points Forrester's DYNAMO run printed, in every figure, for every version. Because the three versions agree to rounding, their overlays are pixel-for-pixel identical apart from the header naming the script.
 
-The scans are not distributed with this repository (see `NOTICE.md`). To make the overlays yourself from your own copy of the book:
+The 36 overlays are in `book-overlays/`, named for the script and figure, for example `world2_3_modern_fig4-05.png`. Full-page scans of the book are not distributed (see `NOTICE.md`). To regenerate the overlays from your own copy of the book:
 
 ```
 python validation/tools/extract_pages.py chapter4.pdf --first-page 66
 python validation/tools/make_overlays.py
 ```
 
-The first command turns a scanned PDF of Chapter 4 (two book pages per sideways scan, as ours was) into page images `p066.png` ... in `validation/book-pages/`. Scans laid out differently need their own page images, named by book page, and possibly adjusted plot boxes in `tools/figures.py`. The second command writes `validation/book-overlays/<script>_fig4-NN.png`, twelve per version. Both folders are git-ignored, so the book's pages never enter the repository.
+The first command turns a scanned PDF of Chapter 4 (two book pages per sideways scan, as ours was) into page images `p066.png` ... in `validation/book-pages/`. Scans laid out differently need their own page images, named by book page, and possibly adjusted plot boxes in `tools/figures.py`. The second command writes `validation/book-overlays/<script>_fig4-NN.png`, twelve per version. The page-image folder is git-ignored, so full pages of the book never enter the repository.
 
 How to read an overlay: the header names the script, the book figure and the experiment, and gives a color legend with each curve's name, the symbol the book plots it with, and its scale. Below the header is the scanned page with our curves drawn on top. The black letters on each page are the points Forrester's DYNAMO run printed, one every 4 years (PLTPER = 4). The black ink curves were drawn through those points by hand for publication, so where the ink and the letters disagree, the letters are the data. Two places show this clearly: near the capital-investment peak in Figure 4-5, and at the death-rate spike in Figure 4-8. That spike falls between two 4-year plot points, so the ink could not show its true height. As in the book, any part of a curve beyond its scale is not drawn.
 
