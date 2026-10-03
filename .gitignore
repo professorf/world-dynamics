@@ -1,6 +1,9 @@
 __pycache__/
 *.pyc
 
+# Your Python virtual environment
+.venv/
+
 # Plots the scripts save when run from the repository root
 /world2_*_ORIG-*.png
 /world2_3_modern_runs.png

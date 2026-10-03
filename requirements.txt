@@ -3,6 +3,9 @@
 numpy
 matplotlib
 
+# Only for the interactive app, world2_4_dash_app.py
+dash
+
 # Only for the figure overlays in validation/tools/
 pillow
 pymupdf
