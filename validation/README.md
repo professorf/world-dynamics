@@ -41,7 +41,7 @@ NRUN1 and POLN1 are the values after the 1970 switch, so every experiment follow
 How each version runs an experiment:
 
 - **Versions 1 and 2:** the changed cards are edited in a copy of the script, as a DYNAMO user would have changed cards and rerun. For example `NRUN1 = .25` in version 1, or `natural_resource_usage_normal_1 = .25` in version 2.
-- **Version 3:** through its policy dictionary, its table definitions, and the `end_year` argument of `simulate()`.
+- **Version 3:** through the `policy`, `tables` and `end_year` arguments of `simulate()`.
 
 ## 1. Agreement between the three versions
 

@@ -40,7 +40,7 @@ The versions change one thing at a time, so a reader can see each change on its 
 
 **Version 2, `world2_2_readable.py`.** The same lines in the same order, with every abbreviation spelled out using the book's own definitions (`P` becomes `population`, `MSL` becomes `material_standard_of_living`). The DYNAMO cards stay as comments, so the file also works as a lookup between the two sets of names. Its results are bit-for-bit identical to version 1.
 
-**Version 3, `world2_3_modern.py`.** The same model and the same single loop, read top to bottom, with no classes. The model is a function, `simulate(policy)`, so it can be run under different policies and compared. The seven policy switches (DYNAMO's `CLIP` cards) sit in one dictionary at the top, tables are numpy lookups, and levels update in place at the end of each step. Its results match version 1 to within floating-point rounding.
+**Version 3, `world2_3_modern.py`.** The same model and the same single loop, read top to bottom, with no classes. The model is a function, `simulate(policy, tables)`, so it can be run under different policies and compared. The seven policy switches (DYNAMO's `CLIP` cards) sit in one dictionary at the top, and the 22 tables in another, each a numpy lookup filed under the variable it produces, so an experiment can replace either. Levels update in place at the end of each step. Its results match version 1 to within floating-point rounding.
 
 ## Methodology
 

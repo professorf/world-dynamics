@@ -6,8 +6,7 @@ Their changes are the PRESENT / ORIGINAL values printed in each figure's margin.
 
 Versions 1 and 2 are run the DYNAMO way: a copy of the script with the changed
 cards edited, as a DYNAMO user would have changed cards and rerun. Version 3 is
-run through its policy dictionary, its table definitions and the end_year
-argument of simulate().
+run through the policy, tables and end_year arguments of simulate().
 
 Every run comes back in one common form: a dict of numpy arrays keyed by the
 DYNAMO names (TIME, P, NR, ...), plus POLAT, derived as POL / POLA (eq. 33).
@@ -47,8 +46,8 @@ V2_NAME = {"NRUN1": "natural_resource_usage_normal_1", "POLN1": "pollution_norma
            "BRCMT": "birth_rate_from_crowding_multiplier_table",
            "DRCMT": "death_rate_from_crowding_multiplier_table", "LENGTH": "final_time"}
 V3_POLICY = {"NRUN1": "natural_resource_usage_normal", "POLN1": "pollution_normal"}
-V3_TABLE = {"BRCMT": ("BIRTH_RATE_FROM_CROWDING_MULTIPLIER_TABLE", 0, 5),
-            "DRCMT": ("DEATH_RATE_FROM_CROWDING_MULTIPLIER_TABLE", 0, 5)}
+V3_TABLE = {"BRCMT": ("birth_rate_from_crowding_multiplier", 0, 5),
+            "DRCMT": ("death_rate_from_crowding_multiplier", 0, 5)}
 
 # DYNAMO name -> key in the results of versions 2 and 3
 LONG = {"TIME": "time", "P": "population", "NR": "natural_resources", "CI": "capital_investment",
@@ -98,10 +97,11 @@ def _run_v3(exp):
     for k, v in exp["constants"].items():
         before, _, year = policy[V3_POLICY[k]]
         policy[V3_POLICY[k]] = (before, v, year)
+    tables = dict(m3.STANDARD_TABLES)
     for k, v in exp["tables"].items():
-        attr, lo, hi = V3_TABLE[k]
-        setattr(m3, attr, m3.table(lo, hi, v))
-    r = m3.simulate(policy, end_year=exp["length"])
+        name, lo, hi = V3_TABLE[k]
+        tables[name] = m3.table(lo, hi, v)
+    r = m3.simulate(policy, tables=tables, end_year=exp["length"])
     return {k: r["year" if k == "TIME" else LONG[k]] for k in LONG}, ""
 
 

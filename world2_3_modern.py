@@ -13,11 +13,14 @@ The DYNAMO listing is in source-code.dyn; the names are from definition-of-terms
 
 WHAT CHANGED FROM world2_2_readable.py
 
-1. The model is a function, simulate(policy), so you can run it more than once
-   and compare runs. Inside it is still one loop you can read top to bottom.
+1. The model is a function, simulate(policy, tables), so you can run it more
+   than once and compare runs. Inside it is still one loop you can read top to
+   bottom.
 2. The seven policy switches (DYNAMO's CLIP cards) are collected in one
    dictionary at the top. Changing a policy means changing one line there.
-3. Tables are pairs of numpy arrays, and one function, lookup(), reads them.
+3. Tables are pairs of numpy arrays, collected in a second dictionary, each
+   under the name of the variable it produces. One function, lookup(), reads
+   them. An experiment can replace a table the way it replaces a policy.
 4. The J/K bookkeeping is gone. Each level is updated in place at the end of
    the step: population += dt * (birth_rate - death_rate). This computes the
    same numbers DYNAMO did, because the rates were already calculated from the
@@ -97,6 +100,12 @@ QUALITY_OF_LIFE_STANDARD = 1                                      # [37.1] QLS
 #
 # A table is a pair of arrays: x values spaced evenly from low to high, and
 # the y value at each. table(0, 5, [...]) is DYNAMO's TABHL(..., X, 0, 5, 1).
+#
+# All 22 tables sit in one dictionary, each under the name of the variable it
+# produces. Like the policy, the tables are an argument of simulate(), so an
+# experiment can replace one. The book's food-shortage run (Figure 4-11) does:
+#   simulate(tables={**STANDARD_TABLES,
+#                    "death_rate_from_crowding_multiplier": table(0, 5, [.9, 1, 1, 1, 1, 1])})
 # ---------------------------------------------------------------------------
 
 def table(x_low, x_high, y_values):
@@ -114,36 +123,39 @@ def lookup(tab, x):
     return float(np.interp(x, xs, ys))
 
 
-BIRTH_RATE_FROM_MATERIAL_MULTIPLIER_TABLE = table(0, 5, [1.2, 1, .85, .75, .7, .7])                      # BRMMT  [3.1]
-NATURAL_RESOURCE_EXTRACTION_MULTIPLIER_TABLE = table(0, 1, [0, .15, .5, .85, 1])                         # NREMT  [6.1]
-DEATH_RATE_FROM_MATERIAL_MULTIPLIER_TABLE = table(0, 5, [3, 1.8, 1, .8, .7, .6, .53, .5, .5, .5, .5])    # DRMMT  [11.1]
-DEATH_RATE_FROM_POLLUTION_MULTIPLIER_TABLE = table(0, 60, [.92, 1.3, 2, 3.2, 4.8, 6.8, 9.2])             # DRPMT  [12.1]
-DEATH_RATE_FROM_FOOD_MULTIPLIER_TABLE = table(0, 2, [30, 3, 2, 1.4, 1, .7, .6, .5, .5])                  # DRFMT  [13.1]
-DEATH_RATE_FROM_CROWDING_MULTIPLIER_TABLE = table(0, 5, [.9, 1, 1.2, 1.5, 1.9, 3])                       # DRCMT  [14.1]
-BIRTH_RATE_FROM_CROWDING_MULTIPLIER_TABLE = table(0, 5, [1.05, 1, .9, .7, .6, .55])                      # BRCMT  [16.1]
-BIRTH_RATE_FROM_FOOD_MULTIPLIER_TABLE = table(0, 4, [0, 1, 1.6, 1.9, 2])                                 # BRFMT  [17.1]
-BIRTH_RATE_FROM_POLLUTION_MULTIPLIER_TABLE = table(0, 60, [1.02, .9, .7, .4, .25, .15, .1])              # BRPMT  [18.1]
-FOOD_FROM_CROWDING_MULTIPLIER_TABLE = table(0, 5, [2.4, 1, .6, .4, .3, .2])                              # FCMT   [20.1]
-FOOD_POTENTIAL_FROM_CAPITAL_INVESTMENT_TABLE = table(0, 6, [.5, 1, 1.4, 1.7, 1.9, 2.05, 2.2])            # FPCIT  [21.1]
-CAPITAL_INVESTMENT_MULTIPLIER_TABLE = table(0, 5, [.1, 1, 1.8, 2.4, 2.8, 3])                             # CIMT   [26.1]
-FOOD_FROM_POLLUTION_MULTIPLIER_TABLE = table(0, 60, [1.02, .9, .65, .35, .2, .1, .05])                   # FPMT   [28.1]
-POLLUTION_FROM_CAPITAL_MULTIPLIER_TABLE = table(0, 5, [.05, 1, 3, 5.4, 7.4, 8])                          # POLCMT [32.1]
-POLLUTION_ABSORPTION_TIME_TABLE = table(0, 60, [.6, 2.5, 5, 8, 11.5, 15.5, 20])                          # POLATT [34.1]
-CAPITAL_FRACTION_INDICATED_BY_FOOD_RATIO_TABLE = table(0, 2, [1, .6, .3, .15, .1])                       # CFIFRT [36.1]
-QUALITY_OF_LIFE_FROM_MATERIAL_TABLE = table(0, 5, [.2, 1, 1.7, 2.3, 2.7, 2.9])                           # QLMT   [38.1]
-QUALITY_OF_LIFE_FROM_CROWDING_TABLE = table(0, 5, [2, 1.3, 1, .75, .55, .45, .38, .3, .25, .22, .2])     # QLCT   [39.1]
-QUALITY_OF_LIFE_FROM_FOOD_TABLE = table(0, 4, [0, 1, 1.8, 2.4, 2.7])                                     # QLFT   [40.1]
-QUALITY_OF_LIFE_FROM_POLLUTION_TABLE = table(0, 60, [1.04, .85, .6, .3, .15, .05, .02])                  # QLPT   [41.1]
-NATURAL_RESOURCE_FROM_MATERIAL_MULTIPLIER_TABLE = table(0, 10, [0, 1, 1.8, 2.4, 2.9, 3.3, 3.6, 3.8, 3.9, 3.95, 4])  # NRMMT [42.1]
-CAPITAL_INVESTMENT_FROM_QUALITY_RATIO_TABLE = table(0, 2, [.7, .8, 1, 1.5, 2])                           # CIQRT  [43.1]
+STANDARD_TABLES = {
+    "birth_rate_from_material_multiplier":       table(0, 5, [1.2, 1, .85, .75, .7, .7]),                           # BRMMT  [3.1]
+    "natural_resource_extraction_multiplier":    table(0, 1, [0, .15, .5, .85, 1]),                                 # NREMT  [6.1]
+    "death_rate_from_material_multiplier":       table(0, 5, [3, 1.8, 1, .8, .7, .6, .53, .5, .5, .5, .5]),         # DRMMT  [11.1]
+    "death_rate_from_pollution_multiplier":      table(0, 60, [.92, 1.3, 2, 3.2, 4.8, 6.8, 9.2]),                   # DRPMT  [12.1]
+    "death_rate_from_food_multiplier":           table(0, 2, [30, 3, 2, 1.4, 1, .7, .6, .5, .5]),                   # DRFMT  [13.1]
+    "death_rate_from_crowding_multiplier":       table(0, 5, [.9, 1, 1.2, 1.5, 1.9, 3]),                            # DRCMT  [14.1]
+    "birth_rate_from_crowding_multiplier":       table(0, 5, [1.05, 1, .9, .7, .6, .55]),                           # BRCMT  [16.1]
+    "birth_rate_from_food_multiplier":           table(0, 4, [0, 1, 1.6, 1.9, 2]),                                  # BRFMT  [17.1]
+    "birth_rate_from_pollution_multiplier":      table(0, 60, [1.02, .9, .7, .4, .25, .15, .1]),                    # BRPMT  [18.1]
+    "food_from_crowding_multiplier":             table(0, 5, [2.4, 1, .6, .4, .3, .2]),                             # FCMT   [20.1]
+    "food_potential_from_capital_investment":    table(0, 6, [.5, 1, 1.4, 1.7, 1.9, 2.05, 2.2]),                    # FPCIT  [21.1]
+    "capital_investment_multiplier":             table(0, 5, [.1, 1, 1.8, 2.4, 2.8, 3]),                            # CIMT   [26.1]
+    "food_from_pollution_multiplier":            table(0, 60, [1.02, .9, .65, .35, .2, .1, .05]),                   # FPMT   [28.1]
+    "pollution_from_capital_multiplier":         table(0, 5, [.05, 1, 3, 5.4, 7.4, 8]),                             # POLCMT [32.1]
+    "pollution_absorption_time":                 table(0, 60, [.6, 2.5, 5, 8, 11.5, 15.5, 20]),                     # POLATT [34.1]
+    "capital_fraction_indicated_by_food_ratio":  table(0, 2, [1, .6, .3, .15, .1]),                                 # CFIFRT [36.1]
+    "quality_of_life_from_material":             table(0, 5, [.2, 1, 1.7, 2.3, 2.7, 2.9]),                          # QLMT   [38.1]
+    "quality_of_life_from_crowding":             table(0, 5, [2, 1.3, 1, .75, .55, .45, .38, .3, .25, .22, .2]),    # QLCT   [39.1]
+    "quality_of_life_from_food":                 table(0, 4, [0, 1, 1.8, 2.4, 2.7]),                                # QLFT   [40.1]
+    "quality_of_life_from_pollution":            table(0, 60, [1.04, .85, .6, .3, .15, .05, .02]),                  # QLPT   [41.1]
+    "natural_resource_from_material_multiplier": table(0, 10, [0, 1, 1.8, 2.4, 2.9, 3.3, 3.6, 3.8, 3.9, 3.95, 4]),  # NRMMT  [42.1]
+    "capital_investment_from_quality_ratio":     table(0, 2, [.7, .8, 1, 1.5, 2]),                                  # CIQRT  [43.1]
+}
 
 
 # ---------------------------------------------------------------------------
 # The model
 # ---------------------------------------------------------------------------
 
-def simulate(policy=STANDARD_POLICY, start_year=1900, end_year=2100, dt=0.2):
-    """Run World2 from start_year to end_year in steps of dt years.
+def simulate(policy=STANDARD_POLICY, tables=STANDARD_TABLES, start_year=1900, end_year=2100, dt=0.2):
+    """Run World2 from start_year to end_year in steps of dt years, under a
+    policy (see STANDARD_POLICY) and a set of tables (see STANDARD_TABLES).
 
     Returns a dict of numpy arrays, one value per time step, keyed by name
     ("year", "population", "pollution_ratio", ...).
@@ -168,7 +180,7 @@ def simulate(policy=STANDARD_POLICY, start_year=1900, end_year=2100, dt=0.2):
         # Natural resources and the material standard of living
         natural_resource_fraction_remaining = natural_resources / NATURAL_RESOURCES_INITIAL       # [7]
         natural_resource_extraction_multiplier = lookup(
-            NATURAL_RESOURCE_EXTRACTION_MULTIPLIER_TABLE, natural_resource_fraction_remaining)    # [6]
+            tables["natural_resource_extraction_multiplier"], natural_resource_fraction_remaining)    # [6]
         capital_investment_ratio = capital_investment / population                                # [23]
         effective_capital_investment_ratio = (                                                    # [5]
             capital_investment_ratio
@@ -180,41 +192,41 @@ def simulate(policy=STANDARD_POLICY, start_year=1900, end_year=2100, dt=0.2):
 
         # Effects of the material standard of living
         birth_rate_from_material_multiplier = lookup(
-            BIRTH_RATE_FROM_MATERIAL_MULTIPLIER_TABLE, material_standard_of_living)               # [3]
+            tables["birth_rate_from_material_multiplier"], material_standard_of_living)           # [3]
         death_rate_from_material_multiplier = lookup(
-            DEATH_RATE_FROM_MATERIAL_MULTIPLIER_TABLE, material_standard_of_living)               # [11]
+            tables["death_rate_from_material_multiplier"], material_standard_of_living)           # [11]
         capital_investment_multiplier = lookup(
-            CAPITAL_INVESTMENT_MULTIPLIER_TABLE, material_standard_of_living)                     # [26]
+            tables["capital_investment_multiplier"], material_standard_of_living)                 # [26]
         natural_resource_from_material_multiplier = lookup(
-            NATURAL_RESOURCE_FROM_MATERIAL_MULTIPLIER_TABLE, material_standard_of_living)         # [42]
+            tables["natural_resource_from_material_multiplier"], material_standard_of_living)     # [42]
         quality_of_life_from_material = lookup(
-            QUALITY_OF_LIFE_FROM_MATERIAL_TABLE, material_standard_of_living)                     # [38]
+            tables["quality_of_life_from_material"], material_standard_of_living)                 # [38]
 
         # Crowding and its effects
         crowding_ratio = population / (LAND_AREA * POPULATION_DENSITY_NORMAL)                     # [15]
         birth_rate_from_crowding_multiplier = lookup(
-            BIRTH_RATE_FROM_CROWDING_MULTIPLIER_TABLE, crowding_ratio)                            # [16]
+            tables["birth_rate_from_crowding_multiplier"], crowding_ratio)                        # [16]
         death_rate_from_crowding_multiplier = lookup(
-            DEATH_RATE_FROM_CROWDING_MULTIPLIER_TABLE, crowding_ratio)                            # [14]
+            tables["death_rate_from_crowding_multiplier"], crowding_ratio)                        # [14]
         food_from_crowding_multiplier = lookup(
-            FOOD_FROM_CROWDING_MULTIPLIER_TABLE, crowding_ratio)                                  # [20]
+            tables["food_from_crowding_multiplier"], crowding_ratio)                              # [20]
         quality_of_life_from_crowding = lookup(
-            QUALITY_OF_LIFE_FROM_CROWDING_TABLE, crowding_ratio)                                  # [39]
+            tables["quality_of_life_from_crowding"], crowding_ratio)                              # [39]
 
         # Pollution and its effects
         pollution_ratio = pollution / POLLUTION_STANDARD                                          # [29]
         birth_rate_from_pollution_multiplier = lookup(
-            BIRTH_RATE_FROM_POLLUTION_MULTIPLIER_TABLE, pollution_ratio)                          # [18]
+            tables["birth_rate_from_pollution_multiplier"], pollution_ratio)                      # [18]
         death_rate_from_pollution_multiplier = lookup(
-            DEATH_RATE_FROM_POLLUTION_MULTIPLIER_TABLE, pollution_ratio)                          # [12]
+            tables["death_rate_from_pollution_multiplier"], pollution_ratio)                      # [12]
         food_from_pollution_multiplier = lookup(
-            FOOD_FROM_POLLUTION_MULTIPLIER_TABLE, pollution_ratio)                                # [28]
+            tables["food_from_pollution_multiplier"], pollution_ratio)                            # [28]
         pollution_absorption_time = lookup(
-            POLLUTION_ABSORPTION_TIME_TABLE, pollution_ratio)                                     # [34]
+            tables["pollution_absorption_time"], pollution_ratio)                                 # [34]
         pollution_from_capital_multiplier = lookup(
-            POLLUTION_FROM_CAPITAL_MULTIPLIER_TABLE, capital_investment_ratio)                    # [32]
+            tables["pollution_from_capital_multiplier"], capital_investment_ratio)                # [32]
         quality_of_life_from_pollution = lookup(
-            QUALITY_OF_LIFE_FROM_POLLUTION_TABLE, pollution_ratio)                                # [41]
+            tables["quality_of_life_from_pollution"], pollution_ratio)                            # [41]
 
         # Food and its effects
         capital_investment_ratio_in_agriculture = (                                               # [22]
@@ -222,24 +234,24 @@ def simulate(policy=STANDARD_POLICY, start_year=1900, end_year=2100, dt=0.2):
             * capital_investment_in_agriculture_fraction
             / CAPITAL_INVESTMENT_IN_AGRICULTURE_FRACTION_NORMAL)
         food_potential_from_capital_investment = lookup(
-            FOOD_POTENTIAL_FROM_CAPITAL_INVESTMENT_TABLE, capital_investment_ratio_in_agriculture)  # [21]
+            tables["food_potential_from_capital_investment"], capital_investment_ratio_in_agriculture)  # [21]
         food_ratio = (food_potential_from_capital_investment                                      # [19]
                       * food_from_crowding_multiplier
                       * food_from_pollution_multiplier
                       * policy_value(policy, "food_coefficient", year)
                       / FOOD_NORMAL)
         birth_rate_from_food_multiplier = lookup(
-            BIRTH_RATE_FROM_FOOD_MULTIPLIER_TABLE, food_ratio)                                    # [17]
+            tables["birth_rate_from_food_multiplier"], food_ratio)                                # [17]
         death_rate_from_food_multiplier = lookup(
-            DEATH_RATE_FROM_FOOD_MULTIPLIER_TABLE, food_ratio)                                    # [13]
+            tables["death_rate_from_food_multiplier"], food_ratio)                                # [13]
         capital_fraction_indicated_by_food_ratio = lookup(
-            CAPITAL_FRACTION_INDICATED_BY_FOOD_RATIO_TABLE, food_ratio)                           # [36]
+            tables["capital_fraction_indicated_by_food_ratio"], food_ratio)                       # [36]
         quality_of_life_from_food = lookup(
-            QUALITY_OF_LIFE_FROM_FOOD_TABLE, food_ratio)                                          # [40]
+            tables["quality_of_life_from_food"], food_ratio)                                      # [40]
 
         # Quality of life
         capital_investment_from_quality_ratio = lookup(                                           # [43]
-            CAPITAL_INVESTMENT_FROM_QUALITY_RATIO_TABLE,
+            tables["capital_investment_from_quality_ratio"],
             quality_of_life_from_material / quality_of_life_from_food)
         quality_of_life = (QUALITY_OF_LIFE_STANDARD                                               # [37]
                            * quality_of_life_from_material
