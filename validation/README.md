@@ -7,6 +7,7 @@ This folder records how the three Python versions of World2 were checked against
 | `world2_1_isomorph.py` | The DYNAMO listing, card for card |
 | `world2_2_readable.py` | The same lines, with readable names |
 | `world2_3_modern.py` | Modern Python: the same single time loop, plus policy switches for experiments |
+| `world2_4_dash_app.py` | An interactive app built on version 3 (checked in section 5) |
 
 **Summary.** Each version reproduces every figure in Chapter 4 of *World Dynamics*: the standard run and the book's three policy experiments (Figures 4-1 to 4-12, out to the year 2300). Version 2 is bit-for-bit identical to version 1 in every experiment, and version 3 matches version 1 to within floating-point rounding.
 
@@ -16,6 +17,8 @@ This folder records how the three Python versions of World2 were checked against
 |---|---|
 | `tools/experiments.py` | Runs every version under every experiment and compares them |
 | `tools/checkpoints.py` | Prints our numbers for every statement checked in the book's text |
+| `tools/check_dash_app.py` | Checks that the app draws the validated runs, in all four experiments |
+| `app-build-log.md` | How the app was built, stage by stage: each stage's target, checks, and what they found |
 | `tools/extract_pages.py` | Makes page images from your own scan of Chapter 4 |
 | `tools/calibrate.py`, `tools/figures.py`, `tools/make_overlays.py` | Draw our runs on the book's figures |
 | `book-overlays/<script>_fig4-NN.png` | Each version's runs drawn on the book's Figures 4-1 to 4-12 (36 images) |
@@ -36,7 +39,7 @@ The changes are the ones printed in each figure's margin as PRESENT against ORIG
 | Crowding | 4-9, 4-10 | NRUN1 = 0, POLN1 = 0.1 (was 1), LENGTH = 2300 (was 2100) |
 | Food shortage | 4-11, 4-12 | the crowding changes, plus DRCMT = .9/1/1/1/1/1 (was .9/1/1.2/1.5/1.9/3) and BRCMT = 1.05/1/1/1/1/1 (was 1.05/1/.9/.7/.6/.55) |
 
-NRUN1 and POLN1 are the values after the 1970 switch, so every experiment follows the standard run exactly until 1970.
+NRUN1 and POLN1 are the values after the 1970 switch, so the pollution-crisis and crowding experiments follow the standard run exactly until 1970. The food-shortage experiment's table changes have no switch: they apply from the start, but have no effect until the crowding ratio passes 1, in 1967.6, so that run departs from the standard run by less than 0.03% in population before 1970.
 
 How each version runs an experiment:
 
@@ -118,6 +121,19 @@ In each case our run agrees with the plotted data, so the text's numbers are app
 [pyworld2](https://github.com/cvanwynsberghe/pyworld2) (version 1.1, Charles Vanwynsberghe, MIT license) is a separate Python implementation of World2 with a different program structure. Over all 1001 time steps of the standard run, its largest relative difference from ours is about 2 parts in 10^15 for every level and the main auxiliaries (P, NR, CI, POL, CIAF, POLR, FR, MSL, QL).
 
 pyworld2 also includes the pollution-crisis experiment, and there the two programs differ by up to 1.8%. The cause is the switch time. pyworld2 builds its time axis with `numpy.arange`, which accumulates rounding, so its "1970" step is really 1970.000000000016. The switch test "is TIME still at or before 1970?" then fails, and the switch fires one step (0.2 years) early. Moving our switch one step earlier, as a diagnostic only, makes the two programs agree to 1.3 parts in 10^15. Our versions follow DYNAMO's definition of CLIP: the old value up to and including the switch year. A 0.2-year shift is far too small to see at the scale of the book's figures, so the book cannot tell us which one Forrester's own run did.
+
+## 5. The interactive app
+
+`python validation/tools/check_dash_app.py` presses each of the app's four experiment buttons (by calling the function the buttons call) and passes the result to the app's chart callback, as Dash would. In every experiment the controls hold the book's values exactly, including the two changed tables in the food-shortage run, and every chart draws version 3's validated run, bit for bit, over the standard run.
+
+| Experiment | Largest relative difference from version 1, over the ten charted variables |
+|---|---|
+| Standard run | 1.0 parts in 10^15 |
+| Pollution crisis | 5.1 parts in 10^15 |
+| Crowding | 1.0 parts in 10^15 |
+| Food shortage | 3.0 parts in 10^16 |
+
+The app holds no model of its own: it imports `simulate()` from version 3. Its food-shortage button needed `simulate()` to take the tables as an argument. After that change, version 3's runs were bit-for-bit identical to before in all four experiments, and every check in this folder gave the same results.
 
 ---
 

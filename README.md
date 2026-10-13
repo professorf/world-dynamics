@@ -4,7 +4,7 @@
 
 A staged, validated translation of Jay W. Forrester's **World2** model, from his book *World Dynamics* (1971; 2nd ed. 1973), into Python.
 
-World2 is one of the founding models of system dynamics: five interacting stocks (population, natural resources, capital investment, pollution, and the fraction of capital in agriculture) simulated from 1900 to 2100. Forrester wrote it in DYNAMO, the simulation language of its day. This repository translates it in three stages, each one readable on its own, and checks every stage against the original book.
+World2 is one of the founding models of system dynamics: five interacting stocks (population, natural resources, capital investment, pollution, and the fraction of capital in agriculture) simulated from 1900 to 2100. Forrester wrote it in DYNAMO, the simulation language of its day. This repository translates it in three stages, each one readable on its own, checks every stage against the original book, and then extends the last stage into an interactive app.
 
 **Authors:** Nick V. Flor (University of New Mexico, nickflor@unm.edu, ORCID [0000-0002-5162-9277](https://orcid.org/0000-0002-5162-9277)) and Claudia (Claude Interactive Assistant), i.e., Claude, an AI model by Anthropic. See [How this was made](#how-this-was-made) for who did what, and [CITE.md](CITE.md) to cite it.
 
@@ -15,9 +15,10 @@ pip install -r requirements.txt
 python world2_1_isomorph.py       # standard library only; matplotlib draws the plots
 python world2_2_readable.py
 python world2_3_modern.py         # needs numpy
+python world2_4_dash_app.py       # needs dash; then open http://127.0.0.1:8050 in a browser
 ```
 
-Versions 1 and 2 reproduce the book's standard run and draw the two plots defined by the listing's PLOT cards. Version 3 runs the standard run and the book's pollution-crisis experiment, prints a short summary of each, and plots them side by side.
+Versions 1 and 2 reproduce the book's standard run and draw the two plots defined by the listing's PLOT cards. Version 3 runs the standard run and the book's pollution-crisis experiment, prints a short summary of each, and plots them side by side. The app runs the model in your browser, where you can try the book's experiments and your own.
 
 ## What's here
 
@@ -29,6 +30,7 @@ Versions 1 and 2 reproduce the book's standard run and draw the two plots define
 | `world2_1_isomorph.py` | Version 1: the DYNAMO listing, card for card |
 | `world2_2_readable.py` | Version 2: the same lines, with readable names |
 | `world2_3_modern.py` | Version 3: modern Python, the same single time loop, with policy switches for experiments |
+| `world2_4_dash_app.py` | An interactive app built on version 3: the book's experiments, and sliders for your own |
 | `validation/` | How each version was checked against the book, with results |
 | `tools/make_causal_loop_diagram.py` | Regenerates the diagram from `source-code.dyn` |
 
@@ -41,6 +43,12 @@ The versions change one thing at a time, so a reader can see each change on its 
 **Version 2, `world2_2_readable.py`.** The same lines in the same order, with every abbreviation spelled out using the book's own definitions (`P` becomes `population`, `MSL` becomes `material_standard_of_living`). The DYNAMO cards stay as comments, so the file also works as a lookup between the two sets of names. Its results are bit-for-bit identical to version 1.
 
 **Version 3, `world2_3_modern.py`.** The same model and the same single loop, read top to bottom, with no classes. The model is a function, `simulate(policy, tables)`, so it can be run under different policies and compared. The seven policy switches (DYNAMO's `CLIP` cards) sit in one dictionary at the top, and the 22 tables in another, each a numpy lookup filed under the variable it produces, so an experiment can replace either. Levels update in place at the end of each step. Its results match version 1 to within floating-point rounding.
+
+## The app
+
+**`world2_4_dash_app.py`** extends version 3 into an interactive web app, built with [Dash](https://dash.plotly.com). Buttons set it to each of the book's four Chapter 4 experiments. Sliders change the seven policy switches, the year they switch and the year the run ends, and a control removes crowding's effect on births and deaths, as the book's food-shortage experiment does. Every chart shows the run in blue over the standard run in gray, on the scale the book plots it on.
+
+The app holds no model of its own. It imports `simulate()` from version 3 and only draws what it returns, so the validated model stays the only copy. It was built in three stages, each checked and committed before the next: the standard run in the browser, then the sliders, then the experiment buttons and the comparison line. The food-shortage experiment needed one change to version 3 itself (`simulate()` now takes the tables as an argument), and version 3 was re-validated after it, with results bit-for-bit identical to before.
 
 ## Methodology
 
@@ -68,6 +76,7 @@ Each version was run under all four experiments in Chapter 4 of *World Dynamics*
 - **Against the book's figures.** Every run was drawn on scans of all twelve figures in Chapter 4 (4-1 to 4-12, out to the year 2300). The curves land on the points Forrester's DYNAMO run printed. The 36 overlay images are in `validation/book-overlays/`, and `validation/tools/` regenerates them from your own copy of the book.
 - **Against the book's text.** Twenty-one numerical statements in Chapter 4 were checked: peak years, peak values and ratios.
 - **Against an independent implementation.** The standard run matches [pyworld2](https://github.com/cvanwynsberghe/pyworld2) to about 2 parts in 10^15.
+- **The app.** Set to each of the four experiments, the app draws version 3's validated runs, bit for bit.
 
 Two findings came out of the validation. Three numbers in Chapter 4's text disagree with the book's own plotted data, and in each case our runs agree with the plots. And pyworld2's pollution-crisis run differs from ours by up to 1.8%, because floating-point drift in its time axis fires the 1970 switch one step early. Full results are in [validation/README.md](validation/README.md).
 
@@ -80,9 +89,9 @@ Two findings came out of the validation. Three numbers in Chapter 4's text disag
 
 This project was a collaboration between a person and an AI, carried out in conversation.
 
-**Nick V. Flor** set the goal (a version of World2 that teaches system dynamics from its origins), designed the staged approach (a literal isomorph first, then readable names, then a modern version that keeps the single visible loop), made the design decisions along the way (including the Mermaid diagram and the file naming), supplied the scans of the book, checked the two scan flaws against the book's text, and set the scope of the validation.
+**Nick V. Flor** set the goal (a version of World2 that teaches system dynamics from its origins), designed the staged approach (a literal isomorph first, then readable names, then a modern version that keeps the single visible loop), made the design decisions along the way (including the Mermaid diagram and the file naming), supplied the scans of the book, checked the two scan flaws against the book's text, set the scope of the validation, and decided to extend the model into an interactive app, built and committed one checked stage at a time.
 
-**Claudia** (Claude, an AI model by Anthropic) transcribed the listing and glossary from the scans, wrote the three Python versions, the diagram generator and the validation tools, ran and analyzed the validation, and drafted the documentation.
+**Claudia** (Claude, an AI model by Anthropic) transcribed the listing and glossary from the scans, wrote the three Python versions, the app, the diagram generator and the validation tools, ran and analyzed the validation, and drafted the documentation.
 
 ## Reproducing the validation
 
@@ -91,6 +100,7 @@ The cross-version comparison and the checkpoints need only this repository:
 ```
 python validation/tools/experiments.py     # how closely the three versions agree, in all four experiments
 python validation/tools/checkpoints.py     # our numbers for every statement checked in the book's text
+python validation/tools/check_dash_app.py  # the app draws the validated runs, in all four experiments
 ```
 
 The finished overlays are in `validation/book-overlays/`. Regenerating them needs your own copy of *World Dynamics*, Chapter 4; see [validation/README.md](validation/README.md).
